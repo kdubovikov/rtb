@@ -1,0 +1,4 @@
+.idea
+.vscode
+data/*.txt
+__pycache__
