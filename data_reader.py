@@ -5,6 +5,7 @@ import pandas as pd
 from functools import reduce
 from user_agents import parse
 
+
 class DataReader:
     """Sequential data reader with ability to specify it's own row parsing funtion."""
 
@@ -18,7 +19,7 @@ class DataReader:
 
         row_transformers : list of func
             Functions that parse row of data and return feature array.
-            Each transformer will be applied sequentially like t3(t2(t1(row))) 
+            Each transformer will be applied sequentially like t3(t2(t1(row)))
 
         post_processor : func
             Post processing function that takes transformed data list as input
@@ -37,7 +38,7 @@ class DataReader:
                 if limit is not None and i > limit:
                     break
 
-                # fold transformers list; apply each transformer sequentially like t3(t2(t1(row))) 
+                # fold transformers list; apply each transformer sequentially like t3(t2(t1(row)))
                 transformed_row = reduce(lambda response, func: func(response), self._row_transformers, row)
                 result.append(transformed_row)
 
@@ -45,8 +46,8 @@ class DataReader:
         return result
 
 
-class IPinYouDataReader(DataReader):
-    """IPinYou RTB Dataset loader."""
+class ImpressionsReader(DataReader):
+    """IPinYou RTB impressions Dataset loader."""
 
     def __init__(self, data_path):
         super().__init__(data_path, [self._ipinyou_data_row_transformer],
@@ -100,7 +101,7 @@ class IPinYouDataReader(DataReader):
     @staticmethod
     def _preprocess_data(data):
         """Perform basic data preprocessing
-        
+
         Parameters
         ----------
         data : list of dict
@@ -129,9 +130,56 @@ class IPinYouDataReader(DataReader):
                     user_tag_col_cache.add(col_name)
 
                     d[col_name] = 1
-        
+
         df = pd.DataFrame(data)
         df.drop('user_tags', inplace=True, axis=1)
         df[list(user_tag_col_cache)] = df[list(user_tag_col_cache)].fillna(0) # fill not present tags with 0 for each user
 
+        return df
+
+
+class ClicksReader(DataReader):
+    """IPinYou RTB clicks  Dataset loader."""
+
+    def __init__(self, data_path):
+        super().__init__(data_path, [self._ipinyou_data_row_transformer],
+                                     self._preprocess_data)
+
+    @staticmethod
+    def _ipinyou_data_row_transformer(row):
+        """Load data from ipinyou dataset format.
+        Expecting click log form 2-nd or 3-rd rounds.
+
+        Parameters
+        ----------
+        file_name : str
+            Path to the dataset.
+
+        limit : int
+            Limit loading to first `limit` lines."""
+
+        entry = {'bid_id': row[0],
+                 'timestamp': row[1],
+                 'ipinyou_id': row[3]}
+
+        entry['timestamp'] = datetime.strptime(
+            entry['timestamp'][:-3], '%Y%m%d%H%M%S')
+
+        return entry
+
+    @staticmethod
+    def _preprocess_data(data):
+        """Perform basic data preprocessing
+
+        Parameters
+        ----------
+        data : list of dict
+            Click data log, can be loaded with :func:`load_data`
+
+        Returns
+        -------
+        df : pandas.DataFrame
+        """
+
+        df = pd.DataFrame(data)
         return df
