@@ -1,8 +1,8 @@
+from datetime import datetime
+from functools import reduce
 import codecs
 import csv
-from datetime import datetime
 import pandas as pd
-from functools import reduce
 from user_agents import parse
 
 
@@ -29,14 +29,19 @@ class DataReader:
         self._post_processor = post_processor
         self.data_path = data_path
 
-    def read_data(self, limit=None):
+    def read_data(self, limit=None, verbose=False):
         with codecs.open(self.data_path, 'r', encoding='utf-8', errors='ignore') as data_file:
             reader = csv.reader(data_file, delimiter='\t')
             result = []
 
             for i, row in enumerate(reader):
-                if limit is not None and i > limit:
-                    break
+                if limit is not None:
+                    if i > limit:
+                        break
+
+                    if i % 10000 == 0 and verbose:
+                        load_percent = i / limit
+                        print("%.2f" % load_percent)
 
                 # fold transformers list; apply each transformer sequentially like t3(t2(t1(row)))
                 transformed_row = reduce(lambda response, func: func(response), self._row_transformers, row)
@@ -51,7 +56,7 @@ class ImpressionsReader(DataReader):
 
     def __init__(self, data_path):
         super().__init__(data_path, [self._ipinyou_data_row_transformer],
-                                     self._preprocess_data)
+                         self._preprocess_data)
 
     @staticmethod
     def _ipinyou_data_row_transformer(row):
@@ -133,7 +138,8 @@ class ImpressionsReader(DataReader):
 
         df = pd.DataFrame(data)
         df.drop('user_tags', inplace=True, axis=1)
-        df[list(user_tag_col_cache)] = df[list(user_tag_col_cache)].fillna(0) # fill not present tags with 0 for each user
+        df[list(user_tag_col_cache)] = df[list(user_tag_col_cache)].fillna(
+            0)  # fill not present tags with 0 for each user
 
         return df
 
@@ -143,7 +149,7 @@ class ClicksReader(DataReader):
 
     def __init__(self, data_path):
         super().__init__(data_path, [self._ipinyou_data_row_transformer],
-                                     self._preprocess_data)
+                         self._preprocess_data)
 
     @staticmethod
     def _ipinyou_data_row_transformer(row):
