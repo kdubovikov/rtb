@@ -2,3 +2,5 @@
 .vscode
 data/*.txt
 __pycache__
+.ropeproject
+*.hdf
