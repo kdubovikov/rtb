@@ -141,6 +141,20 @@ class ImpressionsReader(DataReader):
         df[list(user_tag_col_cache)] = df[list(user_tag_col_cache)].fillna(
             0)  # fill not present tags with 0 for each user
 
+        # convert numeric columns from object to numeric dtypes
+        convert_to_nums = ['ad_slot_floor_price', 
+                   'ad_slot_height', 
+                   'ad_slot_width', 
+                   'advertiser_id', 
+                   'bidding_price', 
+                   'log_type', 
+                   'paying_price',
+                   'city_id',
+                   'creative_id']
+
+        for col in convert_to_nums:
+            df[col] = pd.to_numeric(df[col])
+
         return df
 
 
