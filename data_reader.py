@@ -1,10 +1,11 @@
+"""Data reading modules"""
+
 from datetime import datetime
 from functools import reduce
 import codecs
 import csv
 import pandas as pd
 from user_agents import parse
-
 
 class DataReader:
     """Sequential data reader with ability to specify it's own row parsing funtion."""
@@ -44,7 +45,8 @@ class DataReader:
                         print("%.2f" % load_percent)
 
                 # fold transformers list; apply each transformer sequentially like t3(t2(t1(row)))
-                transformed_row = reduce(lambda response, func: func(response), self._row_transformers, row)
+                transformed_row = reduce(lambda response, func: func(
+                    response), self._row_transformers, row)
                 result.append(transformed_row)
 
         result = self._post_processor(result)
@@ -119,22 +121,22 @@ class ImpressionsReader(DataReader):
 
         user_tag_col_cache = set()
 
-        for d in data:
+        for row in data:
             # parse user agent
-            user_agent = parse(d['user_agent'])
-            d['os'] = user_agent.os.family
-            d['browser'] = user_agent.browser.family
-            d['device'] = user_agent.device.family
+            user_agent = parse(row['user_agent'])
+            row['os'] = user_agent.os.family
+            row['browser'] = user_agent.browser.family
+            row['device'] = user_agent.device.family
 
             # vectorize user tags (one-hot)
-            tags = d['user_tags']
+            tags = row['user_tags']
 
             if tags is not None:
                 for t in tags:
                     col_name = "user_tag_%d" % t
                     user_tag_col_cache.add(col_name)
 
-                    d[col_name] = 1
+                    row[col_name] = 1
 
         df = pd.DataFrame(data)
         df.drop('user_tags', inplace=True, axis=1)
@@ -142,15 +144,15 @@ class ImpressionsReader(DataReader):
             0)  # fill not present tags with 0 for each user
 
         # convert numeric columns from object to numeric dtypes
-        convert_to_nums = ['ad_slot_floor_price', 
-                   'ad_slot_height', 
-                   'ad_slot_width', 
-                   'advertiser_id', 
-                   'bidding_price', 
-                   'log_type', 
-                   'paying_price',
-                   'city_id',
-                   'creative_id']
+        convert_to_nums = ['ad_slot_floor_price',
+                           'ad_slot_height',
+                           'ad_slot_width',
+                           'advertiser_id',
+                           'bidding_price',
+                           'log_type',
+                           'paying_price',
+                           'city_id',
+                           'creative_id']
 
         for col in convert_to_nums:
             df[col] = pd.to_numeric(df[col])
