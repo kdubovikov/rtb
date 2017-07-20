@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.linear_model import LogisticRegression
-from bidding import FlatBiddingStrategy, BidSimulator, GoalBiddingStrategy
+from bidding import FlatBiddingStrategy, BidSimulator, GoalBiddingStrategy, EffectiveCPCBiddingStrategy, RandomBiddingStrategy
 
 def sample_data(df, sample_col, fraction=500):
     df_col = df[df[sample_col] == 1]
@@ -89,16 +89,17 @@ def main():
 
     print("Mean CV score: %f" % np.mean(scores))
 
-    bid_simulator = BidSimulator(data_preproc, FlatBiddingStrategy(80))
-    stats = bid_simulator.run()
-    print(stats)
-    print(BidSimulator.metrics_report(*stats))
-
     ctr_model.fit(x, y)
-    goal_bid_simulator = BidSimulator(data_preproc, GoalBiddingStrategy(80))
-    stats = goal_bid_simulator.run(ctr_model)
-    print(stats)
-    print(BidSimulator.metrics_report(*stats))
+    bid_simulators = [BidSimulator(data_preproc, FlatBiddingStrategy(80)),
+                      BidSimulator(data_preproc, RandomBiddingStrategy(80)),
+                      BidSimulator(data_preproc, GoalBiddingStrategy(80)),
+                      BidSimulator(data_preproc, EffectiveCPCBiddingStrategy(data_preproc))] # LEAK HERE! split data_preproc
+
+    for bid_simulator in bid_simulators:
+        print(bid_simulator)
+        stats = bid_simulator.run(ctr_model)
+        print(stats)
+        print(BidSimulator.metrics_report(*stats))
 
 if __name__ == '__main__':
     main()

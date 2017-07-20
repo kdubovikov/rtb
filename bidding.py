@@ -1,4 +1,5 @@
 """Bidding module"""
+import numpy as np
 
 class BidSimulator:
     """Simulates given bidding strategy on a dataset"""
@@ -55,7 +56,7 @@ class BidSimulator:
         return total_clicks, total_impressions, total_ad_spend
 
     @staticmethod
-    def metrics_report(total_ad_spend, total_clicks, total_impressions):
+    def metrics_report(total_clicks, total_impressions, total_ad_spend):
         """Generate metric let g:pymode_lint = 0u
 
         Returns
@@ -67,11 +68,12 @@ class BidSimulator:
             Click Through Rate.
 
         cpm : float
+
             Cost Per Mille.
         """
-        cpc = BidSimulator.cpc(total_ad_spend, total_clicks)
         ctr = BidSimulator.ctr(total_clicks, total_impressions)
         cpm = BidSimulator.cpm(total_ad_spend, total_impressions)
+        cpc = BidSimulator.cpc(total_ad_spend, total_clicks)
 
         report = "CTR:\t%.2f\nCPM:\t%.3f\nCPC:\t%.3f" % (ctr, cpm, cpc)
 
@@ -91,6 +93,39 @@ class BidSimulator:
     def cpc(total_spendings, num_of_clicks):
         """Calculate Cost Per Click"""
         return total_spendings / num_of_clicks if num_of_clicks > 0 else 0
+
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__.__name__,
+                self._bidding_strategy.__class__.__name__)
+
+
+class RandomBiddingStrategy(object):
+    def __init__(self, bid):
+        """Create flat bidding strategy
+
+        Parameters
+        ----------
+        bid : float
+            Bid value
+        """
+        self._bid = bid
+
+    def __call__(self, prospenity, row):
+        """Execute bidding strategy
+
+        Parameters
+        ----------
+        prospenity : float
+            prospenity to click
+        row : dict-like
+            data row with features, pricing, impression and click data
+
+        Returns
+        -------
+        bid_price : float
+        """
+
+        return np.random.rand() * self._bid
 
 
 class FlatBiddingStrategy():
@@ -153,3 +188,19 @@ class GoalBiddingStrategy():
         """
 
         return prospenity * self._bid
+
+
+class EffectiveCPCBiddingStrategy(GoalBiddingStrategy):
+    """Bid based on prospenity and CPC calculated from training data"""
+
+    def __init__(self, data):
+        """Create bidding strategy
+
+        Parameters
+        ----------
+        data : pd.DataFrame
+            Historical data
+        """
+        effective_cpc = data['paying_price'].sum() / data['click'].sum()
+        print(effective_cpc)
+        super().__init__(effective_cpc)

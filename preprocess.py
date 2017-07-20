@@ -41,7 +41,7 @@ def main():
         print("Total clicks after merge: %d" % click.sum())
 
         imp_data['click'] = click
-        imp_data.to_hdf(args.output, 'clicks')
+        imp_data.to_hdf(args.output, 'clicks', append=True)
 
 if __name__ == '__main__':
     main()
