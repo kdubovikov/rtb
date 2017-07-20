@@ -1,6 +1,6 @@
 .idea
 .vscode
-data/*.txt
+data/**/*.txt
 __pycache__
 .ropeproject
 *.hdf

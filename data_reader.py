@@ -6,11 +6,14 @@ import codecs
 import csv
 import pandas as pd
 from user_agents import parse
+from abc import ABCMeta, abstractmethod
 
 class DataReader:
     """Sequential data reader with ability to specify it's own row parsing funtion."""
 
-    def __init__(self, data_path, row_transformers, post_processor):
+    __metaclass__ = ABCMeta
+
+    def __init__(self, data_path):
         """Create data reader for IPinYou RTB dataset.
 
         Parameters
@@ -26,11 +29,18 @@ class DataReader:
             Post processing function that takes transformed data list as input
         """
 
-        self._row_transformers = row_transformers
-        self._post_processor = post_processor
         self.data_path = data_path
 
     def read_data(self, limit=None, verbose=False):
+        """Read data from files and perform row transformations and post processing
+        
+        Parameters
+        ----------
+        limit : int
+            Limit data loading to `limit` lines
+        verbose : bool
+            Print progress
+            """
         with codecs.open(self.data_path, 'r', encoding='utf-8', errors='ignore') as data_file:
             reader = csv.reader(data_file, delimiter='\t')
             result = []
@@ -45,34 +55,44 @@ class DataReader:
                         print("%.2f" % load_percent)
 
                 # fold transformers list; apply each transformer sequentially like t3(t2(t1(row)))
-                transformed_row = reduce(lambda response, func: func(
-                    response), self._row_transformers, row)
-                result.append(transformed_row)
+                # transformed_row = reduce(lambda response, func: func(
+                #    response), self._row_transformers, row)
+                try:
+                    transformed_row = self._row_transformer(row)
+                    result.append(transformed_row)
+                except Exception as e:
+                    print("Error transforming row %d: %s" % (i, str(e)))
 
         result = self._post_processor(result)
         return result
 
+    @abstractmethod
+    def _row_transformer(self, row):
+        """Transform data row.
+        
+        Returns
+        -------
+        row
+            Transformed row.
+        """
+        pass
+
+    @abstractmethod
+    def _post_processor(self, data):
+        """Perform data post processing.
+        
+        Returns
+        -------
+        result
+            Post processed data.
+        """
+        pass
+
 
 class ImpressionsReader(DataReader):
-    """IPinYou RTB impressions Dataset loader."""
+    """IPinYou RTB impressions Dataset loader. Expecting data from 2 or 3 competition (with additional columns)"""
 
-    def __init__(self, data_path):
-        super().__init__(data_path, [self._ipinyou_data_row_transformer],
-                         self._preprocess_data)
-
-    @staticmethod
-    def _ipinyou_data_row_transformer(row):
-        """Load data from ipinyou dataset format.
-        Expecting impression log form 2-nd or 3-rd rounds.
-
-        Parameters
-        ----------
-        file_name : str
-            Path to the dataset.
-
-        limit : int
-            Limit loading to first `limit` lines."""
-
+    def _row_transformer(self, row):
         entry = {'bid_id': row[0],
                  'timestamp': row[1],
                  'log_type': row[2],
@@ -105,20 +125,7 @@ class ImpressionsReader(DataReader):
 
         return entry
 
-    @staticmethod
-    def _preprocess_data(data):
-        """Perform basic data preprocessing
-
-        Parameters
-        ----------
-        data : list of dict
-            Impression data log, can be loaded with :func:`load_data`
-
-        Returns
-        -------
-        df : pandas.DataFrame
-        """
-
+    def _post_processor(self, data):
         user_tag_col_cache = set()
 
         for row in data:
@@ -161,25 +168,9 @@ class ImpressionsReader(DataReader):
 
 
 class ClicksReader(DataReader):
-    """IPinYou RTB clicks  Dataset loader."""
+    """IPinYou RTB clicks dataset loader. Expecting data from 2 or 3 competition (with additional columns)"""
 
-    def __init__(self, data_path):
-        super().__init__(data_path, [self._ipinyou_data_row_transformer],
-                         self._preprocess_data)
-
-    @staticmethod
-    def _ipinyou_data_row_transformer(row):
-        """Load data from ipinyou dataset format.
-        Expecting click log form 2-nd or 3-rd rounds.
-
-        Parameters
-        ----------
-        file_name : str
-            Path to the dataset.
-
-        limit : int
-            Limit loading to first `limit` lines."""
-
+    def _row_transformer(self, row):
         entry = {'bid_id': row[0],
                  'timestamp': row[1],
                  'ipinyou_id': row[3]}
@@ -189,19 +180,6 @@ class ClicksReader(DataReader):
 
         return entry
 
-    @staticmethod
-    def _preprocess_data(data):
-        """Perform basic data preprocessing
-
-        Parameters
-        ----------
-        data : list of dict
-            Click data log, can be loaded with :func:`load_data`
-
-        Returns
-        -------
-        df : pandas.DataFrame
-        """
-
+    def _post_processor(self, data):
         df = pd.DataFrame(data)
         return df
