@@ -1,5 +1,11 @@
 """Bidding module"""
+import collections
 import numpy as np
+
+
+RunResults = collections.namedtuple('RunResults', ['total_clicks',
+                                                   'total_impressions',
+                                                   'total_ad_spend'])
 
 
 class BidSimulator:
@@ -54,11 +60,14 @@ class BidSimulator:
                 if row['click']:
                     total_clicks += 1
 
-        return total_clicks, total_impressions, total_ad_spend
+        return RunResults(total_clicks, total_impressions, total_ad_spend)
 
     @staticmethod
-    def metrics_report(total_clicks, total_impressions, total_ad_spend):
+    def metrics_report(run_results):
         """Generate metric let g:pymode_lint = 0u
+        Parameters
+        ----------
+        run_results : RunResults
 
         Returns
         -------
@@ -72,15 +81,21 @@ class BidSimulator:
 
             Cost Per Mille.
         """
-        ctr = BidSimulator.ctr(total_clicks, total_impressions)
-        cpm = BidSimulator.cpm(total_ad_spend, total_impressions)
-        cpc = BidSimulator.cpc(total_ad_spend, total_clicks)
+        ctr = BidSimulator.ctr(run_results.total_clicks,
+                               run_results.total_impressions)
+
+        cpm = BidSimulator.cpm(run_results.total_ad_spend,
+                               run_results.total_impressions)
+
+        cpc = BidSimulator.cpc(run_results.total_ad_spend,
+                               run_results.total_clicks)
 
         report = "CTR:\t%.2f\nCPM:\t%.3f\nCPC:\t%.3f" % (ctr, cpm, cpc)
 
         return report
 
     @staticmethod
+
     def ctr(num_of_clicks, num_of_impressions):
         """Claculate Click Through Rate - frequency of clicks on ads."""
         return num_of_clicks / num_of_impressions \

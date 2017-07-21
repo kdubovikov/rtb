@@ -122,7 +122,7 @@ def main():
         print(bid_simulator)
         stats = bid_simulator.run(ctr_model)
         print(stats)
-        print(BidSimulator.metrics_report(*stats))
+        print(BidSimulator.metrics_report(stats))
 
 
 if __name__ == '__main__':
