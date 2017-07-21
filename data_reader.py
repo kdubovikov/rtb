@@ -1,15 +1,16 @@
 """Data reading modules"""
 
+from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from functools import reduce
 import codecs
 import csv
 import pandas as pd
 from user_agents import parse
-from abc import ABCMeta, abstractmethod
+
 
 class DataReader:
-    """Sequential data reader with ability to specify it's own row parsing funtion."""
+    """Sequential data reader with ability to specify
+    it's own row parsing funtion."""
 
     __metaclass__ = ABCMeta
 
@@ -33,7 +34,7 @@ class DataReader:
 
     def read_data(self, limit=None, verbose=False):
         """Read data from files and perform row transformations and post processing
-        
+
         Parameters
         ----------
         limit : int
@@ -41,7 +42,9 @@ class DataReader:
         verbose : bool
             Print progress
             """
-        with codecs.open(self.data_path, 'r', encoding='utf-8', errors='ignore') as data_file:
+        with codecs.open(self.data_path,
+                         'r', encoding='utf-8',
+                         errors='ignore') as data_file:
             reader = csv.reader(data_file, delimiter='\t')
             result = []
 
@@ -54,9 +57,6 @@ class DataReader:
                         load_percent = i / limit
                         print("%.2f" % load_percent)
 
-                # fold transformers list; apply each transformer sequentially like t3(t2(t1(row)))
-                # transformed_row = reduce(lambda response, func: func(
-                #    response), self._row_transformers, row)
                 try:
                     transformed_row = self._row_transformer(row)
                     result.append(transformed_row)
@@ -69,7 +69,7 @@ class DataReader:
     @abstractmethod
     def _row_transformer(self, row):
         """Transform data row.
-        
+
         Returns
         -------
         row
@@ -80,7 +80,7 @@ class DataReader:
     @abstractmethod
     def _post_processor(self, data):
         """Perform data post processing.
-        
+
         Returns
         -------
         result
@@ -90,7 +90,9 @@ class DataReader:
 
 
 class ImpressionsReader(DataReader):
-    """IPinYou RTB impressions Dataset loader. Expecting data from 2 or 3 competition (with additional columns)"""
+    """IPinYou RTB impressions Dataset loader.
+    Expecting data from 2 or 3 competition (with additional columns)
+    """
 
     def _row_transformer(self, row):
         entry = {'bid_id': row[0],
@@ -168,7 +170,8 @@ class ImpressionsReader(DataReader):
 
 
 class ClicksReader(DataReader):
-    """IPinYou RTB clicks dataset loader. Expecting data from 2 or 3 competition (with additional columns)"""
+    """IPinYou RTB clicks dataset loader.
+    Expecting data from 2 or 3 competition (with additional columns)"""
 
     def _row_transformer(self, row):
         entry = {'bid_id': row[0],

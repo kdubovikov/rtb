@@ -1,6 +1,7 @@
 """Bidding module"""
 import numpy as np
 
+
 class BidSimulator:
     """Simulates given bidding strategy on a dataset"""
 
@@ -10,9 +11,8 @@ class BidSimulator:
         Parameters
         ----------
         data : pandas.DataFrame
-            Historical data containing features for model predicti n, bidding price,
-            winning price, impressions and click indicators.
-            Expected column names:
+            Historical data containing features for model predicti n, bidding
+            price, winning price, impressions and click indicators.
 
         bidding_strategy : func
             Function that retuns bid given prospenity to click and data row
@@ -41,12 +41,13 @@ class BidSimulator:
         for i, row in self._data.iterrows():
             if ctr_model is not None:
                 prospenity = ctr_model.predict_proba(
-                    row.drop(['click', 'paying_price']).values.reshape(1, -1))[0][1]
+                    row.drop(['click',
+                              'paying_price']).values.reshape(1, -1))[0][1]
             else:
                 prospenity = None
 
             bid = self._bidding_strategy(prospenity, row)
-            
+
             if bid >= row['paying_price']:
                 total_impressions += 1
                 total_ad_spend += row['paying_price']
@@ -82,12 +83,15 @@ class BidSimulator:
     @staticmethod
     def ctr(num_of_clicks, num_of_impressions):
         """Claculate Click Through Rate - frequency of clicks on ads."""
-        return num_of_clicks / num_of_impressions if num_of_impressions > 0 else 0
+        return num_of_clicks / num_of_impressions \
+               if num_of_impressions > 0 else 0
 
     @staticmethod
     def cpm(total_spendings, num_of_impressions):
-        """Calculate Cost Per Mille - total cost advertiser pays for 1000 impressions."""
-        return total_spendings / num_of_impressions * 1000 if num_of_impressions > 0 else 0
+        """Calculate Cost Per Mille
+        - total cost advertiser pays for 1000 impressions."""
+        return total_spendings / num_of_impressions * 1000 \
+               if num_of_impressions > 0 else 0
 
     @staticmethod
     def cpc(total_spendings, num_of_clicks):
@@ -96,12 +100,14 @@ class BidSimulator:
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__,
-                self._bidding_strategy.__class__.__name__)
+                           self._bidding_strategy.__class__.__name__)
 
 
 class RandomBiddingStrategy(object):
+    """Random strategy that places random pertribations of a base bid"""
+
     def __init__(self, bid):
-        """Create flat bidding strategy
+        """Create random bidding strategy
 
         Parameters
         ----------

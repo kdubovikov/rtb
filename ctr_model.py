@@ -5,9 +5,32 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.linear_model import LogisticRegression
-from bidding import FlatBiddingStrategy, BidSimulator, GoalBiddingStrategy, EffectiveCPCBiddingStrategy, RandomBiddingStrategy
+from bidding import (FlatBiddingStrategy,
+                     BidSimulator, GoalBiddingStrategy,
+                     EffectiveCPCBiddingStrategy, RandomBiddingStrategy)
+
 
 def sample_data(df, sample_col, fraction=500):
+    """Sample data based on boolean column. The sample will contain all rows
+    with true value of the column and randomly sampled fraction *
+    len(true_values)
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe
+
+    sample_col : str
+        Boolean column name (sampling indicator)
+
+    fraction : int
+        Fraction of 'false' values to sample
+
+    Returns
+    -------
+    ds : pd.DataFrame
+        sampled dataframe"""
+
     df_col = df[df[sample_col] == 1]
     df_nocol = df[df[sample_col] == 0]
     df_nocol_sample_rows = \
@@ -20,17 +43,14 @@ def sample_data(df, sample_col, fraction=500):
 
 
 def preprocess_data(df):
+    """Preprocess data for CTR model"""
     result = df.copy()
-
-
     one_hot_col_names = ['ad_slot_visibility',
                          'browser',
                          'ad_exchange',
                          'device',
                          'os',
-                         'region_id'
-                         # 'ad_slot_id' # whoa, this one is large
-                         ]
+                         'region_id']
 
     one_hot_cols = pd.get_dummies(df[one_hot_col_names])
 
@@ -61,17 +81,20 @@ def main():
                         action='store_true',
                         help="show percentage of data loaded")
 
+    parser.add_argument('--input', '-i', type=str, default="clicks.hdf",
+                        help="Input HDF filename")
+
     args = parser.parse_args()
 
     print("Loading data...")
 
-    data = pd.read_hdf('clicks.hdf', 'clicks')
+    data = pd.read_hdf(args.input, 'clicks')
     data_preproc = sample_data(data, 'click')
     data_preproc = preprocess_data(data_preproc)
     data_preproc.drop(data_preproc.select_dtypes(include=['object']).columns,
                       axis=1,
 
-                      inplace=True) # drop all string columns
+                      inplace=True)  # drop all string columns
 
     x = data_preproc.drop(['click', 'paying_price'], axis=1)
     y = data_preproc['click']
@@ -93,7 +116,7 @@ def main():
     bid_simulators = [BidSimulator(data_preproc, FlatBiddingStrategy(80)),
                       BidSimulator(data_preproc, RandomBiddingStrategy(80)),
                       BidSimulator(data_preproc, GoalBiddingStrategy(80)),
-                      BidSimulator(data_preproc, EffectiveCPCBiddingStrategy(data_preproc))] # LEAK HERE! split data_preproc
+                      BidSimulator(data_preproc, EffectiveCPCBiddingStrategy(data_preproc))]  # LEAK HERE! split data_preproc
 
     for bid_simulator in bid_simulators:
         print(bid_simulator)
@@ -101,8 +124,6 @@ def main():
         print(stats)
         print(BidSimulator.metrics_report(*stats))
 
+
 if __name__ == '__main__':
     main()
-
-
-
