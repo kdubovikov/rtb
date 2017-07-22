@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import cross_val_score, train_test_split
 from sklearn.linear_model import LogisticRegression
-from bidding import (FlatBiddingStrategy,
+from rtb.bidding import (FlatBiddingStrategy,
                      BidSimulator, GoalBiddingStrategy,
                      EffectiveCPCBiddingStrategy, RandomBiddingStrategy)
 
