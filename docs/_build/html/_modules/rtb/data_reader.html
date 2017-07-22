@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rtb.data_reader &mdash; RTB Implementation with Python 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="RTB Implementation with Python 1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> RTB Implementation with Python
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../info/info.html">Real Time Bidding with Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">RTB Benchmarking API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">RTB Implementation with Python</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>rtb.data_reader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for rtb.data_reader</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Data reading modules&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">user_agents</span> <span class="k">import</span> <span class="n">parse</span>
+
+
+<div class="viewcode-block" id="DataReader"><a class="viewcode-back" href="../../api/api.html#rtb.data_reader.DataReader">[docs]</a><span class="k">class</span> <span class="nc">DataReader</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sequential data reader with ability to specify</span>
+<span class="sd">    it&#39;s own row parsing funtion.&quot;&quot;&quot;</span>
+
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+<div class="viewcode-block" id="DataReader.__init__"><a class="viewcode-back" href="../../api/api.html#rtb.data_reader.DataReader.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create data reader for IPinYou RTB dataset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_path : str</span>
+<span class="sd">            Path to data file.</span>
+
+<span class="sd">        row_transformers : list of func</span>
+<span class="sd">            Functions that parse row of data and return feature array.</span>
+<span class="sd">            Each transformer will be applied sequentially like t3(t2(t1(row)))</span>
+
+<span class="sd">        post_processor : func</span>
+<span class="sd">            Post processing function that takes transformed data list as input</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_path</span> <span class="o">=</span> <span class="n">data_path</span></div>
+
+<div class="viewcode-block" id="DataReader.read_data"><a class="viewcode-back" href="../../api/api.html#rtb.data_reader.DataReader.read_data">[docs]</a>    <span class="k">def</span> <span class="nf">read_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read data from files and perform row transformations and post processing</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        limit : int</span>
+<span class="sd">            Limit data loading to `limit` lines</span>
+<span class="sd">        verbose : bool</span>
+<span class="sd">            Print progress</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span>
+                         <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span>
+                         <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data_file</span><span class="p">:</span>
+            <span class="n">reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="n">data_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reader</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">limit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+                        <span class="k">break</span>
+
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10000</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="n">load_percent</span> <span class="o">=</span> <span class="n">i</span> <span class="o">/</span> <span class="n">limit</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">load_percent</span><span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">transformed_row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_transformer</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transformed_row</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error transforming row </span><span class="si">%d</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_processor</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="DataReader._row_transformer"><a class="viewcode-back" href="../../api/api.html#rtb.data_reader.DataReader._row_transformer">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_row_transformer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transform data row.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        row</span>
+<span class="sd">            Transformed row.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="DataReader._post_processor"><a class="viewcode-back" href="../../api/api.html#rtb.data_reader.DataReader._post_processor">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_post_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform data post processing.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result</span>
+<span class="sd">            Post processed data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="ImpressionsReader"><a class="viewcode-back" href="../../api/api.html#rtb.data_reader.ImpressionsReader">[docs]</a><span class="k">class</span> <span class="nc">ImpressionsReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;IPinYou RTB impressions Dataset loader.</span>
+<span class="sd">    Expecting data from 2 or 3 competition (with additional columns)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_row_transformer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bid_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                 <span class="s1">&#39;log_type&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                 <span class="s1">&#39;ipinyou_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                 <span class="s1">&#39;user_agent&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                 <span class="s1">&#39;ip_address&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+                 <span class="s1">&#39;region_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
+                 <span class="s1">&#39;city_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span>
+                 <span class="s1">&#39;ad_exchange&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">8</span><span class="p">],</span>
+                 <span class="s1">&#39;domain&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span>
+                 <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+                 <span class="s1">&#39;anonymous_url_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span>
+                 <span class="s1">&#39;ad_slot_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span>
+                 <span class="s1">&#39;ad_slot_width&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span>
+                 <span class="s1">&#39;ad_slot_height&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">14</span><span class="p">],</span>
+                 <span class="s1">&#39;ad_slot_visibility&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">15</span><span class="p">],</span>
+                 <span class="s1">&#39;ad_slot&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">16</span><span class="p">],</span>
+                 <span class="s1">&#39;ad_slot_floor_price&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">17</span><span class="p">],</span>
+                 <span class="s1">&#39;creative_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">18</span><span class="p">],</span>
+                 <span class="s1">&#39;bidding_price&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">19</span><span class="p">],</span>
+                 <span class="s1">&#39;paying_price&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">20</span><span class="p">],</span>
+                 <span class="s1">&#39;key_page_url&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">21</span><span class="p">],</span>
+                 <span class="s1">&#39;advertiser_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">22</span><span class="p">],</span>
+                 <span class="s1">&#39;user_tags&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">23</span><span class="p">]}</span>
+
+        <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;user_tags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;user_tags&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+            <span class="s1">&#39;,&#39;</span><span class="p">)]</span> <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;user_tags&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][:</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">entry</span>
+
+    <span class="k">def</span> <span class="nf">_post_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">user_tag_col_cache</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="c1"># parse user agent</span>
+            <span class="n">user_agent</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;user_agent&#39;</span><span class="p">])</span>
+            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;os&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_agent</span><span class="o">.</span><span class="n">os</span><span class="o">.</span><span class="n">family</span>
+            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;browser&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_agent</span><span class="o">.</span><span class="n">browser</span><span class="o">.</span><span class="n">family</span>
+            <span class="n">row</span><span class="p">[</span><span class="s1">&#39;device&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_agent</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">family</span>
+
+            <span class="c1"># vectorize user tags (one-hot)</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;user_tags&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+                    <span class="n">col_name</span> <span class="o">=</span> <span class="s2">&quot;user_tag_</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">t</span>
+                    <span class="n">user_tag_col_cache</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">col_name</span><span class="p">)</span>
+
+                    <span class="n">row</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;user_tags&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">user_tag_col_cache</span><span class="p">)]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">user_tag_col_cache</span><span class="p">)]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">)</span>  <span class="c1"># fill not present tags with 0 for each user</span>
+
+        <span class="c1"># convert numeric columns from object to numeric dtypes</span>
+        <span class="n">convert_to_nums</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ad_slot_floor_price&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;ad_slot_height&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;ad_slot_width&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;advertiser_id&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;bidding_price&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;log_type&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;paying_price&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;city_id&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;creative_id&#39;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">convert_to_nums</span><span class="p">:</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="ClicksReader"><a class="viewcode-back" href="../../api/api.html#rtb.data_reader.ClicksReader">[docs]</a><span class="k">class</span> <span class="nc">ClicksReader</span><span class="p">(</span><span class="n">DataReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;IPinYou RTB clicks dataset loader.</span>
+<span class="sd">    Expecting data from 2 or 3 competition (with additional columns)&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_row_transformer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bid_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                 <span class="s1">&#39;timestamp&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                 <span class="s1">&#39;ipinyou_id&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]}</span>
+
+        <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+            <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">][:</span><span class="o">-</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">entry</span>
+
+    <span class="k">def</span> <span class="nf">_post_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Kirill Dubovikov.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

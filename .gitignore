@@ -5,3 +5,4 @@ __pycache__
 .ropeproject
 *.hdf
 .ipynb_checkpoints
+doc/_*

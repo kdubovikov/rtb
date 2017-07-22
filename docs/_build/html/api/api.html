@@ -1,0 +1,739 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>RTB Benchmarking API Documentation &mdash; RTB Implementation with Python 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="RTB Implementation with Python 1.0 documentation" href="../index.html"/>
+        <link rel="prev" title="Usage" href="../usage/usage.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> RTB Implementation with Python
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../info/info.html">Real Time Bidding with Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage/usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">RTB Benchmarking API Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-rtb.bidding">rtb.bidding module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-rtb.data_reader">rtb.data_reader module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RTB Implementation with Python</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>RTB Benchmarking API Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="rtb-benchmarking-api-documentation">
+<h1>RTB Benchmarking API Documentation<a class="headerlink" href="#rtb-benchmarking-api-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-rtb.bidding">
+<span id="rtb-bidding-module"></span><h2>rtb.bidding module<a class="headerlink" href="#module-rtb.bidding" title="Permalink to this headline">¶</a></h2>
+<p>Bidding module</p>
+<dl class="class">
+<dt id="rtb.bidding.BidSimulator">
+<em class="property">class </em><code class="descclassname">rtb.bidding.</code><code class="descname">BidSimulator</code><span class="sig-paren">(</span><em>data</em>, <em>bidding_strategy</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#BidSimulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.BidSimulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Simulates given bidding strategy on a dataset</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="rtb.bidding.BidSimulator.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data</em>, <em>bidding_strategy</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#BidSimulator.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.BidSimulator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize bidding simulator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : pandas.DataFrame</p>
+<blockquote>
+<div><p>Historical data containing features for model predicti n, bidding
+price, winning price, impressions and click indicators.</p>
+</div></blockquote>
+<p><strong>bidding_strategy</strong> : func</p>
+<blockquote class="last">
+<div><p>Function that retuns bid given prospenity to click and data row</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.bidding.BidSimulator.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#rtb.bidding.BidSimulator.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="rtb.bidding.BidSimulator.cpc">
+<em class="property">static </em><code class="descname">cpc</code><span class="sig-paren">(</span><em>total_spendings</em>, <em>num_of_clicks</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#BidSimulator.cpc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.BidSimulator.cpc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Cost Per Click</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="rtb.bidding.BidSimulator.cpm">
+<em class="property">static </em><code class="descname">cpm</code><span class="sig-paren">(</span><em>total_spendings</em>, <em>num_of_impressions</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#BidSimulator.cpm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.BidSimulator.cpm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Cost Per Mille
+- total cost advertiser pays for 1000 impressions.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="rtb.bidding.BidSimulator.ctr">
+<em class="property">static </em><code class="descname">ctr</code><span class="sig-paren">(</span><em>num_of_clicks</em>, <em>num_of_impressions</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#BidSimulator.ctr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.BidSimulator.ctr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Claculate Click Through Rate - frequency of clicks on ads.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="rtb.bidding.BidSimulator.metrics_report">
+<em class="property">static </em><code class="descname">metrics_report</code><span class="sig-paren">(</span><em>run_results</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#BidSimulator.metrics_report"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.BidSimulator.metrics_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate metric let g:pymode_lint = 0u
+Parameters
+———-
+run_results : RunResults</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>cpc</strong> : float</p>
+<blockquote>
+<div><p>Cost Per Click.</p>
+</div></blockquote>
+<p><strong>ctr</strong> : float</p>
+<blockquote>
+<div><p>Click Through Rate.</p>
+</div></blockquote>
+<p><strong>cpm</strong> : float</p>
+<blockquote class="last">
+<div><p>Cost Per Mille.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.bidding.BidSimulator.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>ctr_model=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#BidSimulator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.BidSimulator.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run bidding simulator</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ctr_model</strong> : sklearn-like model</p>
+<blockquote>
+<div><p>Binary classifier for click prospenity</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>bids</strong> : list</p>
+<blockquote class="last">
+<div><p>Bids for each entry in the data</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rtb.bidding.EffectiveCPCBiddingStrategy">
+<em class="property">class </em><code class="descclassname">rtb.bidding.</code><code class="descname">EffectiveCPCBiddingStrategy</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#EffectiveCPCBiddingStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.EffectiveCPCBiddingStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rtb.bidding.GoalBiddingStrategy" title="rtb.bidding.GoalBiddingStrategy"><code class="xref py py-class docutils literal"><span class="pre">rtb.bidding.GoalBiddingStrategy</span></code></a></p>
+<p>Bid based on prospenity and CPC calculated from training data</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="rtb.bidding.EffectiveCPCBiddingStrategy.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#EffectiveCPCBiddingStrategy.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.EffectiveCPCBiddingStrategy.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create bidding strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : pd.DataFrame</p>
+<blockquote class="last">
+<div><p>Historical data</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rtb.bidding.FlatBiddingStrategy">
+<em class="property">class </em><code class="descclassname">rtb.bidding.</code><code class="descname">FlatBiddingStrategy</code><span class="sig-paren">(</span><em>bid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#FlatBiddingStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.FlatBiddingStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Constant bid</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="rtb.bidding.FlatBiddingStrategy.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>prospenity</em>, <em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#FlatBiddingStrategy.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.FlatBiddingStrategy.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute bidding strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>prospenity</strong> : float</p>
+<blockquote>
+<div><p>prospenity to click</p>
+</div></blockquote>
+<p><strong>row</strong> : dict-like</p>
+<blockquote>
+<div><p>data row with features, pricing, impression and click data</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>bid_price</strong> : float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.bidding.FlatBiddingStrategy.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>bid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#FlatBiddingStrategy.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.FlatBiddingStrategy.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create flat bidding strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>bid</strong> : float</p>
+<blockquote class="last">
+<div><p>Bid value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.bidding.FlatBiddingStrategy.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#rtb.bidding.FlatBiddingStrategy.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rtb.bidding.GoalBiddingStrategy">
+<em class="property">class </em><code class="descclassname">rtb.bidding.</code><code class="descname">GoalBiddingStrategy</code><span class="sig-paren">(</span><em>bid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#GoalBiddingStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.GoalBiddingStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Bid based on prospenity</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="rtb.bidding.GoalBiddingStrategy.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>prospenity</em>, <em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#GoalBiddingStrategy.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.GoalBiddingStrategy.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute bidding strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>prospenity</strong> : float</p>
+<blockquote>
+<div><p>prospenity to click</p>
+</div></blockquote>
+<p><strong>row</strong> : dict-like</p>
+<blockquote>
+<div><p>data row with features, pricing, impression and click data</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>bid_price</strong> : float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.bidding.GoalBiddingStrategy.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>bid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#GoalBiddingStrategy.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.GoalBiddingStrategy.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create bidding strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>bid</strong> : float</p>
+<blockquote class="last">
+<div><p>Bid value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.bidding.GoalBiddingStrategy.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#rtb.bidding.GoalBiddingStrategy.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rtb.bidding.RandomBiddingStrategy">
+<em class="property">class </em><code class="descclassname">rtb.bidding.</code><code class="descname">RandomBiddingStrategy</code><span class="sig-paren">(</span><em>bid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#RandomBiddingStrategy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.RandomBiddingStrategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Random strategy that places random pertribations of a base bid</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="rtb.bidding.RandomBiddingStrategy.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>prospenity</em>, <em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#RandomBiddingStrategy.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.RandomBiddingStrategy.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute bidding strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>prospenity</strong> : float</p>
+<blockquote>
+<div><p>prospenity to click</p>
+</div></blockquote>
+<p><strong>row</strong> : dict-like</p>
+<blockquote>
+<div><p>data row with features, pricing, impression and click data</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>bid_price</strong> : float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.bidding.RandomBiddingStrategy.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>bid</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/bidding.html#RandomBiddingStrategy.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.bidding.RandomBiddingStrategy.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create random bidding strategy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>bid</strong> : float</p>
+<blockquote class="last">
+<div><p>Bid value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.bidding.RandomBiddingStrategy.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#rtb.bidding.RandomBiddingStrategy.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rtb.bidding.RunResults">
+<em class="property">class </em><code class="descclassname">rtb.bidding.</code><code class="descname">RunResults</code><span class="sig-paren">(</span><em>total_clicks</em>, <em>total_impressions</em>, <em>total_ad_spend</em><span class="sig-paren">)</span><a class="headerlink" href="#rtb.bidding.RunResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<p class="rubric">Attributes</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="rtb.bidding.RunResults.__getnewargs__">
+<code class="descname">__getnewargs__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rtb.bidding.RunResults.__getnewargs__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self as a plain tuple.  Used by copy and pickle.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="rtb.bidding.RunResults.__new__">
+<em class="property">static </em><code class="descname">__new__</code><span class="sig-paren">(</span><em>_cls</em>, <em>total_clicks</em>, <em>total_impressions</em>, <em>total_ad_spend</em><span class="sig-paren">)</span><a class="headerlink" href="#rtb.bidding.RunResults.__new__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create new instance of RunResults(total_clicks, total_impressions, total_ad_spend)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.bidding.RunResults.__repr__">
+<code class="descname">__repr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rtb.bidding.RunResults.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a nicely formatted representation string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.bidding.RunResults._asdict">
+<code class="descname">_asdict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rtb.bidding.RunResults._asdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new OrderedDict which maps field names to their values.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rtb.bidding.RunResults._make">
+<em class="property">classmethod </em><code class="descname">_make</code><span class="sig-paren">(</span><em>iterable</em>, <em>new=&lt;built-in method __new__ of type object&gt;</em>, <em>len=&lt;built-in function len&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#rtb.bidding.RunResults._make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a new RunResults object from a sequence or iterable</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.bidding.RunResults._replace">
+<code class="descname">_replace</code><span class="sig-paren">(</span><em>_self</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#rtb.bidding.RunResults._replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new RunResults object replacing specified fields with new values</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.bidding.RunResults.total_ad_spend">
+<code class="descname">total_ad_spend</code><a class="headerlink" href="#rtb.bidding.RunResults.total_ad_spend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.bidding.RunResults.total_clicks">
+<code class="descname">total_clicks</code><a class="headerlink" href="#rtb.bidding.RunResults.total_clicks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.bidding.RunResults.total_impressions">
+<code class="descname">total_impressions</code><a class="headerlink" href="#rtb.bidding.RunResults.total_impressions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-rtb.data_reader">
+<span id="rtb-data-reader-module"></span><h2>rtb.data_reader module<a class="headerlink" href="#module-rtb.data_reader" title="Permalink to this headline">¶</a></h2>
+<p>Data reading modules</p>
+<dl class="class">
+<dt id="rtb.data_reader.ClicksReader">
+<em class="property">class </em><code class="descclassname">rtb.data_reader.</code><code class="descname">ClicksReader</code><span class="sig-paren">(</span><em>data_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/data_reader.html#ClicksReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.data_reader.ClicksReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rtb.data_reader.DataReader" title="rtb.data_reader.DataReader"><code class="xref py py-class docutils literal"><span class="pre">rtb.data_reader.DataReader</span></code></a></p>
+<p>IPinYou RTB clicks dataset loader.
+Expecting data from 2 or 3 competition (with additional columns)</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="rtb.data_reader.DataReader">
+<em class="property">class </em><code class="descclassname">rtb.data_reader.</code><code class="descname">DataReader</code><span class="sig-paren">(</span><em>data_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/data_reader.html#DataReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.data_reader.DataReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Sequential data reader with ability to specify
+it’s own row parsing funtion.</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="rtb.data_reader.DataReader.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/data_reader.html#DataReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.data_reader.DataReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create data reader for IPinYou RTB dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data_path</strong> : str</p>
+<blockquote>
+<div><p>Path to data file.</p>
+</div></blockquote>
+<p><strong>row_transformers</strong> : list of func</p>
+<blockquote>
+<div><p>Functions that parse row of data and return feature array.
+Each transformer will be applied sequentially like t3(t2(t1(row)))</p>
+</div></blockquote>
+<p><strong>post_processor</strong> : func</p>
+<blockquote class="last">
+<div><p>Post processing function that takes transformed data list as input</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.data_reader.DataReader.__metaclass__">
+<code class="descname">__metaclass__</code><a class="headerlink" href="#rtb.data_reader.DataReader.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="rtb.data_reader.DataReader.__weakref__">
+<code class="descname">__weakref__</code><a class="headerlink" href="#rtb.data_reader.DataReader.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.data_reader.DataReader._post_processor">
+<code class="descname">_post_processor</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/data_reader.html#DataReader._post_processor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.data_reader.DataReader._post_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform data post processing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">result</p>
+<blockquote class="last">
+<div><p>Post processed data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.data_reader.DataReader._row_transformer">
+<code class="descname">_row_transformer</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/data_reader.html#DataReader._row_transformer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.data_reader.DataReader._row_transformer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform data row.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">row</p>
+<blockquote class="last">
+<div><p>Transformed row.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rtb.data_reader.DataReader.read_data">
+<code class="descname">read_data</code><span class="sig-paren">(</span><em>limit=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/data_reader.html#DataReader.read_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.data_reader.DataReader.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read data from files and perform row transformations and post processing</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>limit</strong> : int</p>
+<blockquote>
+<div><p>Limit data loading to <cite>limit</cite> lines</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote class="last">
+<div><p>Print progress</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rtb.data_reader.ImpressionsReader">
+<em class="property">class </em><code class="descclassname">rtb.data_reader.</code><code class="descname">ImpressionsReader</code><span class="sig-paren">(</span><em>data_path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rtb/data_reader.html#ImpressionsReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rtb.data_reader.ImpressionsReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#rtb.data_reader.DataReader" title="rtb.data_reader.DataReader"><code class="xref py py-class docutils literal"><span class="pre">rtb.data_reader.DataReader</span></code></a></p>
+<p>IPinYou RTB impressions Dataset loader.
+Expecting data from 2 or 3 competition (with additional columns)</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../usage/usage.html" class="btn btn-neutral" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Kirill Dubovikov.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

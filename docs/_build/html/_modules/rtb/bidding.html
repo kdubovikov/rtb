@@ -1,0 +1,453 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rtb.bidding &mdash; RTB Implementation with Python 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="RTB Implementation with Python 1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> RTB Implementation with Python
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../info/info.html">Real Time Bidding with Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/api.html">RTB Benchmarking API Documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">RTB Implementation with Python</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>rtb.bidding</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for rtb.bidding</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Bidding module&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="n">RunResults</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;RunResults&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;total_clicks&#39;</span><span class="p">,</span>
+                                                   <span class="s1">&#39;total_impressions&#39;</span><span class="p">,</span>
+                                                   <span class="s1">&#39;total_ad_spend&#39;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="BidSimulator"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.BidSimulator">[docs]</a><span class="k">class</span> <span class="nc">BidSimulator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Simulates given bidding strategy on a dataset&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BidSimulator.__init__"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.BidSimulator.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">bidding_strategy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize bidding simulator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : pandas.DataFrame</span>
+<span class="sd">            Historical data containing features for model predicti n, bidding</span>
+<span class="sd">            price, winning price, impressions and click indicators.</span>
+
+<span class="sd">        bidding_strategy : func</span>
+<span class="sd">            Function that retuns bid given prospenity to click and data row</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bidding_strategy</span> <span class="o">=</span> <span class="n">bidding_strategy</span></div>
+
+<div class="viewcode-block" id="BidSimulator.run"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.BidSimulator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctr_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run bidding simulator</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ctr_model : sklearn-like model</span>
+<span class="sd">            Binary classifier for click prospenity</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bids : list</span>
+<span class="sd">            Bids for each entry in the data&quot;&quot;&quot;</span>
+
+        <span class="n">total_impressions</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_ad_spend</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_clicks</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">ctr_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">prospenity</span> <span class="o">=</span> <span class="n">ctr_model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;click&#39;</span><span class="p">,</span>
+                              <span class="s1">&#39;paying_price&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prospenity</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="n">bid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bidding_strategy</span><span class="p">(</span><span class="n">prospenity</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">bid</span> <span class="o">&gt;=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;paying_price&#39;</span><span class="p">]:</span>
+                <span class="n">total_impressions</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">total_ad_spend</span> <span class="o">+=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;paying_price&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;click&#39;</span><span class="p">]:</span>
+                    <span class="n">total_clicks</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">RunResults</span><span class="p">(</span><span class="n">total_clicks</span><span class="p">,</span> <span class="n">total_impressions</span><span class="p">,</span> <span class="n">total_ad_spend</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BidSimulator.metrics_report"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.BidSimulator.metrics_report">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">metrics_report</span><span class="p">(</span><span class="n">run_results</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate metric let g:pymode_lint = 0u</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_results : RunResults</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cpc : float</span>
+<span class="sd">            Cost Per Click.</span>
+
+<span class="sd">        ctr : float</span>
+<span class="sd">            Click Through Rate.</span>
+
+<span class="sd">        cpm : float</span>
+
+<span class="sd">            Cost Per Mille.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ctr</span> <span class="o">=</span> <span class="n">BidSimulator</span><span class="o">.</span><span class="n">ctr</span><span class="p">(</span><span class="n">run_results</span><span class="o">.</span><span class="n">total_clicks</span><span class="p">,</span>
+                               <span class="n">run_results</span><span class="o">.</span><span class="n">total_impressions</span><span class="p">)</span>
+
+        <span class="n">cpm</span> <span class="o">=</span> <span class="n">BidSimulator</span><span class="o">.</span><span class="n">cpm</span><span class="p">(</span><span class="n">run_results</span><span class="o">.</span><span class="n">total_ad_spend</span><span class="p">,</span>
+                               <span class="n">run_results</span><span class="o">.</span><span class="n">total_impressions</span><span class="p">)</span>
+
+        <span class="n">cpc</span> <span class="o">=</span> <span class="n">BidSimulator</span><span class="o">.</span><span class="n">cpc</span><span class="p">(</span><span class="n">run_results</span><span class="o">.</span><span class="n">total_ad_spend</span><span class="p">,</span>
+                               <span class="n">run_results</span><span class="o">.</span><span class="n">total_clicks</span><span class="p">)</span>
+
+        <span class="n">report</span> <span class="o">=</span> <span class="s2">&quot;CTR:</span><span class="se">\t</span><span class="si">%.2f</span><span class="se">\n</span><span class="s2">CPM:</span><span class="se">\t</span><span class="si">%.3f</span><span class="se">\n</span><span class="s2">CPC:</span><span class="se">\t</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ctr</span><span class="p">,</span> <span class="n">cpm</span><span class="p">,</span> <span class="n">cpc</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">report</span></div>
+
+<div class="viewcode-block" id="BidSimulator.ctr"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.BidSimulator.ctr">[docs]</a>    <span class="nd">@staticmethod</span>
+
+    <span class="k">def</span> <span class="nf">ctr</span><span class="p">(</span><span class="n">num_of_clicks</span><span class="p">,</span> <span class="n">num_of_impressions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Claculate Click Through Rate - frequency of clicks on ads.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">num_of_clicks</span> <span class="o">/</span> <span class="n">num_of_impressions</span> \
+               <span class="k">if</span> <span class="n">num_of_impressions</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="BidSimulator.cpm"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.BidSimulator.cpm">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">cpm</span><span class="p">(</span><span class="n">total_spendings</span><span class="p">,</span> <span class="n">num_of_impressions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate Cost Per Mille</span>
+<span class="sd">        - total cost advertiser pays for 1000 impressions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">total_spendings</span> <span class="o">/</span> <span class="n">num_of_impressions</span> <span class="o">*</span> <span class="mi">1000</span> \
+               <span class="k">if</span> <span class="n">num_of_impressions</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="BidSimulator.cpc"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.BidSimulator.cpc">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">cpc</span><span class="p">(</span><span class="n">total_spendings</span><span class="p">,</span> <span class="n">num_of_clicks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate Cost Per Click&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">total_spendings</span> <span class="o">/</span> <span class="n">num_of_clicks</span> <span class="k">if</span> <span class="n">num_of_clicks</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                           <span class="bp">self</span><span class="o">.</span><span class="n">_bidding_strategy</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RandomBiddingStrategy"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.RandomBiddingStrategy">[docs]</a><span class="k">class</span> <span class="nc">RandomBiddingStrategy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Random strategy that places random pertribations of a base bid&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RandomBiddingStrategy.__init__"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.RandomBiddingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create random bidding strategy</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bid : float</span>
+<span class="sd">            Bid value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bid</span> <span class="o">=</span> <span class="n">bid</span></div>
+
+<div class="viewcode-block" id="RandomBiddingStrategy.__call__"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.RandomBiddingStrategy.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prospenity</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute bidding strategy</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prospenity : float</span>
+<span class="sd">            prospenity to click</span>
+<span class="sd">        row : dict-like</span>
+<span class="sd">            data row with features, pricing, impression and click data</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bid_price : float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bid</span></div></div>
+
+
+<div class="viewcode-block" id="FlatBiddingStrategy"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.FlatBiddingStrategy">[docs]</a><span class="k">class</span> <span class="nc">FlatBiddingStrategy</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Constant bid&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FlatBiddingStrategy.__init__"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.FlatBiddingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create flat bidding strategy</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bid : float</span>
+<span class="sd">            Bid value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bid</span> <span class="o">=</span> <span class="n">bid</span></div>
+
+<div class="viewcode-block" id="FlatBiddingStrategy.__call__"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.FlatBiddingStrategy.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prospenity</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute bidding strategy</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prospenity : float</span>
+<span class="sd">            prospenity to click</span>
+<span class="sd">        row : dict-like</span>
+<span class="sd">            data row with features, pricing, impression and click data</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bid_price : float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bid</span></div></div>
+
+
+<div class="viewcode-block" id="GoalBiddingStrategy"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.GoalBiddingStrategy">[docs]</a><span class="k">class</span> <span class="nc">GoalBiddingStrategy</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Bid based on prospenity&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GoalBiddingStrategy.__init__"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.GoalBiddingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create bidding strategy</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bid : float</span>
+<span class="sd">            Bid value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bid</span> <span class="o">=</span> <span class="n">bid</span></div>
+
+<div class="viewcode-block" id="GoalBiddingStrategy.__call__"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.GoalBiddingStrategy.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prospenity</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute bidding strategy</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prospenity : float</span>
+<span class="sd">            prospenity to click</span>
+<span class="sd">        row : dict-like</span>
+<span class="sd">            data row with features, pricing, impression and click data</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bid_price : float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">prospenity</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bid</span></div></div>
+
+
+<div class="viewcode-block" id="EffectiveCPCBiddingStrategy"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.EffectiveCPCBiddingStrategy">[docs]</a><span class="k">class</span> <span class="nc">EffectiveCPCBiddingStrategy</span><span class="p">(</span><span class="n">GoalBiddingStrategy</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Bid based on prospenity and CPC calculated from training data&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EffectiveCPCBiddingStrategy.__init__"><a class="viewcode-back" href="../../api/api.html#rtb.bidding.EffectiveCPCBiddingStrategy.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create bidding strategy</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : pd.DataFrame</span>
+<span class="sd">            Historical data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">effective_cpc</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;paying_price&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;click&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">effective_cpc</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">effective_cpc</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Kirill Dubovikov.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
